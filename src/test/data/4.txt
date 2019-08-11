@@ -1,0 +1,5 @@
+int a
+float float
+float b
+b = a + 3.2
+print b
