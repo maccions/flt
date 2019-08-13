@@ -43,7 +43,7 @@ public class Token {
                 " , r: " +
                 riga +
                 " v: " +
-                valore +
+                (valore == null? "" : valore) +
                 ">";
     }
 }

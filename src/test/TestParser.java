@@ -1,29 +1,40 @@
 package test;
 
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import parser.Parser;
-import parser.SyntacticException;
 import scanner.Scanner;
 
-import java.io.IOException;
+import parser.Parser;
+import parser.SyntacticException;
+import scanner.ScannerException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestParser {
 
-    @Test
-    public void test() {
-        Scanner scanner = null;
-        Scanner scanner2 = null;
-        try {
-            scanner = new Scanner("src/test/data/3.txt");
-            scanner2 = new Scanner("src/test/data/4.txt");
-        } catch (IOException e) {
-            fail();
-        }
-        Parser parser = new Parser(scanner);
-        Parser parser2 = new Parser(scanner2);
-        assertDoesNotThrow(() -> parser.parseProg());
-        assertThrows(SyntacticException.class, () -> parser2.parseProg());
-    }
+	private Parser parser;
+	private Scanner scanner;
+
+	@BeforeEach
+	public void setUp() throws IOException {
+		String path ="src/test/data/sintassiScorretta.txt";
+		scanner = new Scanner(path);
+		parser = new Parser(scanner);
+	}
+
+	@Test
+	public void throwsEccezione() throws IOException, ScannerException, SyntacticException {
+		assertThrows(SyntacticException.class, () -> parser.parse());
+	}
+
+	@Test
+	public void testIntegrazione() throws IOException, ScannerException, SyntacticException {
+		String path ="src/test/data/inputCorretto.txt";
+		Scanner scanner = new Scanner(path);
+		Parser parser = new Parser(scanner);
+		parser.parse();
+	}
+	
 }
