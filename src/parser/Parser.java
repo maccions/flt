@@ -1,11 +1,14 @@
 package parser;
 
+import ast.*;
 import scanner.Scanner;
 import scanner.ScannerException;
 import token.Token;
 import token.TokenType;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
 
@@ -15,7 +18,12 @@ public class Parser {
         this.scanner = scanner;
     }
 
-    public void parseProg() throws IOException, ScannerException, SyntacticException {
+    public NodeProgram parse() throws SyntacticException, ScannerException, IOException {
+        return parseProg();
+    }
+
+    public NodeProgram parseProg() throws IOException, ScannerException, SyntacticException {
+        List<NodeDecSt> nodeDecStList = new ArrayList<>();
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case FLOAT:
@@ -24,33 +32,34 @@ public class Parser {
             case PRINT:
                 parseDSs();
                 match(TokenType.EOF);
-                return;
+                return new NodeProgram(nodeDecStList);
             default:
                 throw new SyntacticException(scanner.peekToken());
         }
     }
 
-    private void parseDSs () throws IOException, ScannerException, SyntacticException {
+    private List<NodeDecSt> parseDSs () throws IOException, ScannerException, SyntacticException {
+        List<NodeDecSt> nodeDecStList = new ArrayList<>();
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case FLOAT:
             case INT:
                 parseDcl();
                 parseDSs();
-                return;
+                return nodeDecStList;
             case ID:
             case PRINT:
                 parseStm();
                 parseDSs();
-                return;
+                return nodeDecStList;
             case EOF:
-                return;
+                return nodeDecStList;
             default:
                 throw new SyntacticException(scanner.peekToken());
         }
     }
 
-    private void parseDcl () throws SyntacticException, ScannerException, IOException {
+    private NodeDecl parseDcl () throws SyntacticException, ScannerException, IOException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case FLOAT:
@@ -66,7 +75,7 @@ public class Parser {
         }
     }
 
-    private void parseStm () throws SyntacticException, ScannerException, IOException {
+    private NodeStm parseStm () throws SyntacticException, ScannerException, IOException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case ID:
@@ -83,7 +92,7 @@ public class Parser {
         }
     }
 
-    private void parseExp() throws ScannerException, SyntacticException, IOException {
+    private NodeExpr parseExp() throws ScannerException, SyntacticException, IOException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case INUM:
@@ -97,7 +106,7 @@ public class Parser {
         }
     }
 
-    private void parseExpP() throws SyntacticException, ScannerException, IOException {
+    private NodeExpr parseExpP() throws SyntacticException, ScannerException, IOException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case PLUS:
@@ -121,7 +130,7 @@ public class Parser {
         }
     }
 
-    private void parseTr() throws IOException, ScannerException, SyntacticException {
+    private NodeExpr parseTr() throws IOException, ScannerException, SyntacticException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case INUM:
@@ -135,7 +144,7 @@ public class Parser {
         }
     }
 
-    private void parseTrP() throws IOException, ScannerException, SyntacticException {
+    private NodeExpr parseTrP() throws IOException, ScannerException, SyntacticException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case TIMES:
@@ -161,7 +170,7 @@ public class Parser {
         }
     }
 
-    private void parseVal () throws IOException, ScannerException, SyntacticException {
+    private NodeExpr parseVal () throws IOException, ScannerException, SyntacticException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case INUM:
