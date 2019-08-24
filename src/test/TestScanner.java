@@ -1,9 +1,8 @@
 package test;
 
-import scanner.ScannerException;
 import org.junit.jupiter.api.Test;
 import scanner.Scanner;
-import token.Token;
+import scanner.ScannerException;
 import token.TokenType;
 
 import java.io.IOException;

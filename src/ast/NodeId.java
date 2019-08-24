@@ -7,9 +7,8 @@ public class NodeId extends NodeAST {
     private String name;
     private Attribute definition;
 
-    public NodeId(String name, Attribute definition) {
+    public NodeId(String name) {
         this.name = name;
-        this.definition = definition;
     }
 
     public String getName() {
