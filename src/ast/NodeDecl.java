@@ -1,5 +1,7 @@
 package ast;
 
+import visitor.Visitor;
+
 public class NodeDecl extends NodeDecSt {
 
     private NodeId id;
@@ -33,5 +35,10 @@ public class NodeDecl extends NodeDecSt {
                 "id=" + id +
                 ", type=" + type +
                 '}';
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }

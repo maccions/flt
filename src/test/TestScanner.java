@@ -1,32 +1,55 @@
 package test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 import scanner.Scanner;
 import scanner.ScannerException;
-import token.TokenType;
-
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TestScanner {
+	
+	@Test
+	public void inputNonCorretto() throws IOException {
+		String path ="src/test/data/inputNonCorretto.txt";
+		Scanner scanner = new Scanner(path);
+		assertDoesNotThrow(() -> scanner.nextToken());
+	}
+	
+	@Test
+	public void inputNonCorretto2() throws IOException {
+		String path ="src/test/data/provaFloatingPoint.txt";
+		Scanner scanner = new Scanner(path);
+		try {
+			scanner.nextToken();
+			assertEquals("<FNUM , r: 1 v: 0.23>", scanner.nextToken().toString());
+			scanner.nextToken();
+			assertThrows(ScannerException.class, () -> scanner.nextToken());
+		} catch (Exception e) {
+			fail();
+		}
+	}
+	
+	@Test
+	public void inputNonCorretto3() throws IOException {
+		String path ="src/test/data/provaDoppioPunto.txt";
+		Scanner scanner = new Scanner(path);
+		assertThrows(ScannerException.class, () -> scanner.nextToken());
+	}
+	
+	@Test
+	public void inputNonCorretto4() throws IOException {
+		String path ="src/test/data/provaMaiuscInterna.txt";
+		Scanner scanner = new Scanner(path);
+		assertThrows(ScannerException.class, () -> scanner.nextToken());
+	}
+	
+	@Test
+	public void inputNonValido() throws FileNotFoundException {
+		assertThrows(FileNotFoundException.class, () -> new Scanner("src/main/java/test/fileNonEsistente.txt"));
+	}
 
-    @Test
-    public void test() {
-        assertThrows(Exception.class, () -> new Scanner(""));
-        try {
-            Scanner scanner;
-            scanner = new Scanner("src/test/data/1.txt");
-            while (scanner.nextToken().getTipo() != TokenType.EOF) {
-            }
-        } catch (ScannerException | IOException e) {
-            fail();
-        }
-        assertTrue(true);
-        assertThrows(ScannerException.class, () -> {
-            Scanner s = new Scanner("src/test/data/2.txt");
-            while (s.nextToken().getTipo() != TokenType.EOF) {
-            }
-        });
-    }
 }

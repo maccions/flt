@@ -30,32 +30,33 @@ public class Parser {
             case INT:
             case ID:
             case PRINT:
-                parseDSs();
+                nodeDecStList = parseDSs(nodeDecStList);
                 match(TokenType.EOF);
                 return new NodeProgram(nodeDecStList);
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
-    private List<NodeDecSt> parseDSs () throws IOException, ScannerException, SyntacticException {
-        List<NodeDecSt> nodeDecStList = new ArrayList<>();
+    private List<NodeDecSt> parseDSs (List<NodeDecSt> nodeDecStList) throws IOException, ScannerException, SyntacticException {
         Token token=scanner.peekToken();
         switch (token.getTipo()) {
             case FLOAT:
             case INT:
-                parseDcl();
-                parseDSs();
+                NodeDecl nodeDecl = parseDcl();
+                nodeDecStList.add(nodeDecl);
+                nodeDecStList = parseDSs(nodeDecStList);
                 return nodeDecStList;
             case ID:
             case PRINT:
-                parseStm();
-                parseDSs();
+                NodeStm nodeStm = parseStm();
+                nodeDecStList.add(nodeStm);
+                nodeDecStList = parseDSs(nodeDecStList);
                 return nodeDecStList;
             case EOF:
                 return nodeDecStList;
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -72,9 +73,9 @@ public class Parser {
                 match(TokenType.INT);
                 valore = scanner.peekToken().getValore();
                 match(TokenType.ID);
-                return new NodeDecl(new NodeId(valore), LangType.FLOAT);
+                return new NodeDecl(new NodeId(valore), LangType.INT);
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -83,7 +84,7 @@ public class Parser {
         String valore;
         switch (token.getTipo()) {
             case ID:
-                valore = scanner.peekToken().getValore();
+                valore = token.getValore();
                 match(TokenType.ID);
                 match(TokenType.ASSIGN);
                 NodeExpr n = parseExp();
@@ -94,7 +95,7 @@ public class Parser {
                 match(TokenType.ID);
                 return new NodePrint(new NodeId(valore));
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -108,7 +109,7 @@ public class Parser {
                 //parseExpP();
                 return parseExpP(parseTr());
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -135,7 +136,7 @@ public class Parser {
             case EOF:
                 return sinistro;
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -149,7 +150,7 @@ public class Parser {
                 //parseTrP();
                 return parseTrP(parseVal());
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -176,7 +177,7 @@ public class Parser {
             case EOF:
                 return sinistro;
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -194,7 +195,7 @@ public class Parser {
                 match(TokenType.ID);
                 return new NodeDeref(new NodeId(val));
             default:
-                throw new SyntacticException(scanner.peekToken());
+                throw new SyntacticException(token);
         }
     }
 
@@ -203,7 +204,7 @@ public class Parser {
             scanner.nextToken();
         }
         else {
-            throw new SyntacticException(scanner.peekToken());
+            throw new SyntacticException(null);
         }
     }
 }

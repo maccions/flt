@@ -1,5 +1,7 @@
 package ast;
 
+import visitor.Visitor;
+
 import java.util.List;
 
 public class NodeProgram extends NodeAST {
@@ -12,9 +14,12 @@ public class NodeProgram extends NodeAST {
 
     @Override
     public String toString() {
-        return "NodeProgram{" +
-                "decsts=" + decsts +
-                '}';
+        StringBuilder lista = new StringBuilder();
+
+        for (NodeDecSt x : decsts)
+            lista.append("[").append(x.toString()).append("]\n");
+
+        return lista.toString();
     }
 
     public List<NodeDecSt> getDecsts() {
@@ -23,5 +28,10 @@ public class NodeProgram extends NodeAST {
 
     public void setDecsts(List<NodeDecSt> decsts) {
         this.decsts = decsts;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -1,4 +1,0 @@
-12
-45.2    6    int
-float efa      sada
-+     -    f     fd

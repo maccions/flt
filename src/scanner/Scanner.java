@@ -54,7 +54,7 @@ public class Scanner {
                 buffer = null;
                 return new Token(riga, TokenType.EOF, "EOF");
             }
-            if (c >= '0' && c <= '9') {
+            if (c >= '0' && c <= '9' || c == '.') {
                 return scanNumber();
             }
             if (c == '+' || c == '-' || c == '\\' || c == '*' || c == '=') {
@@ -117,6 +117,9 @@ public class Scanner {
             token = new Token(riga, TokenType.INUM, sb.toString());
         } else {
             if (sb.toString().matches(TokenType.FNUM.getRegex())) {
+                if(sb.charAt(0) == '.') {
+                    sb.insert(0, '0');
+                }
                 token = new Token(riga, TokenType.FNUM, sb.toString());
             } else {
                 throw new ScannerException();

@@ -1,11 +1,12 @@
 package ast;
 
-import javax.management.Attribute;
+import symbolTable.Attributes;
+import visitor.Visitor;
 
 public class NodeId extends NodeAST {
 
     private String name;
-    private Attribute definition;
+    private Attributes definition;
 
     public NodeId(String name) {
         this.name = name;
@@ -19,11 +20,11 @@ public class NodeId extends NodeAST {
         this.name = name;
     }
 
-    public Attribute getDefinition() {
+    public Attributes getDefinition() {
         return definition;
     }
 
-    public void setDefinition(Attribute definition) {
+    public void setDefinition(Attributes definition) {
         this.definition = definition;
     }
 
@@ -33,5 +34,10 @@ public class NodeId extends NodeAST {
                 "name='" + name + '\'' +
                 ", definition=" + definition +
                 '}';
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }

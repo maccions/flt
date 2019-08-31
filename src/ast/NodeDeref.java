@@ -1,5 +1,7 @@
 package ast;
 
+import visitor.Visitor;
+
 public class NodeDeref extends NodeExpr {
 
     private NodeId id;
@@ -21,5 +23,10 @@ public class NodeDeref extends NodeExpr {
         return "NodeDeref{" +
                 "id=" + id +
                 '}';
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -1,5 +1,7 @@
 package ast;
 
+import visitor.Visitor;
+
 public class NodeCost extends NodeExpr {
 
     private String value;
@@ -33,5 +35,10 @@ public class NodeCost extends NodeExpr {
 
     public void setType(LangType type) {
         this.type = type;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }
