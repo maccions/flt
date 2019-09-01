@@ -41,4 +41,16 @@ public class CodeGeneratorVisitorTest {
         assertEquals("5  sa 0k la5k 3.2 + sb 0k lb p P ", visitor.getCodice());
     }
 
+    @Test
+    public void visitEsempioSlide() throws ScannerException, SyntacticException, IOException {
+        String path = "src/test/data/inputCodeGeneration.txt";
+        Scanner scanner = new Scanner(path);
+        Parser parser = new Parser(scanner);
+        NodeProgram node = parser.parse();
+        tcVisitor.visit(node);
+        assertEquals("", tcVisitor.getLog());
+        visitor.visit(node);
+        assertEquals("1.0 6 5k / sb 0k lb p P 1 6 / sa 0k la p P ", visitor.getCodice());
+    }
+
 }

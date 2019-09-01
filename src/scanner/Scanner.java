@@ -57,7 +57,7 @@ public class Scanner {
             if (c >= '0' && c <= '9' || c == '.') {
                 return scanNumber();
             }
-            if (c == '+' || c == '-' || c == '\\' || c == '*' || c == '=') {
+            if (c == '+' || c == '-' || c == '/' || c == '*' || c == '=') {
                 return scanOp();
             }
             if (c >= 'a' && c <= 'z') {
@@ -92,7 +92,7 @@ public class Scanner {
             case '-':
                 token = new Token(riga, TokenType.MINUS, "" + c);
                 break;
-            case '\\':
+            case '/':
                 token = new Token(riga, TokenType.DIV, "" + c);
                 break;
             case '*':

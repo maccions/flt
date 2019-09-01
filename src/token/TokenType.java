@@ -11,7 +11,7 @@ public enum TokenType {
     PLUS(7, "^\\+$"),
     MINUS(8, "^\\-$"),
     TIMES(9, "^\\*$"),
-    DIV(10, "^\\$"),
+    DIV(10, "^:$"),
     EOF(11, "");
 
     private int code;
