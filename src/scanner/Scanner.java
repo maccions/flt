@@ -110,43 +110,49 @@ public class Scanner {
     private Token scanNumber() throws ScannerException, IOException {
         StringBuilder sb = new StringBuilder();
         while (!skipChar.contains(readChar())) {
-            sb.append(consumeChar());
-        }
-        Token token = null;
-        if (sb.toString().matches(TokenType.INUM.getRegex())) {
-            token = new Token(riga, TokenType.INUM, sb.toString());
-        } else {
-            if (sb.toString().matches(TokenType.FNUM.getRegex())) {
-                if(sb.charAt(0) == '.') {
-                    sb.insert(0, '0');
-                }
-                token = new Token(riga, TokenType.FNUM, sb.toString());
-            } else {
-                throw new ScannerException();
+            char x = consumeChar();
+            if(x >= '0' && x <= '9') {
+                sb.append(x);
+                continue;
             }
+            if(x == '.') {
+                sb.append(x);
+                return scanFloat(sb);
+            }
+            throw new ScannerException();
         }
-        return token;
+        return new Token(riga, TokenType.INUM, sb.toString());
+    }
+
+    private Token scanFloat(StringBuilder sb) throws IOException, ScannerException {
+        if(sb.charAt(0) == '.') {
+            sb.insert(0, '0');
+        }
+        while (!skipChar.contains(readChar())) {
+            char x = consumeChar();
+            if(x >= '0' && x <= '9') {
+                sb.append(x);
+                continue;
+            }
+            throw new ScannerException();
+        }
+        return new Token(riga, TokenType.FNUM, sb.toString());
     }
 
     private Token scanId() throws ScannerException, IOException {
         StringBuilder sb = new StringBuilder();
         while (!skipChar.contains(readChar())) {
-            sb.append(consumeChar());
-        }
-        Token token = null;
-        for (TokenType tmpTokenType : keywords) {
-            if (sb.toString().matches(tmpTokenType.getRegex())) {
-                token = new Token(riga, tmpTokenType, sb.toString());
-                break;
-            }
-        }
-        if (token == null) {
-            if (sb.toString().matches(TokenType.ID.getRegex())) {
-                token = new Token(riga, TokenType.ID, sb.toString());
-            } else {
+            char x = consumeChar();
+            if( x < 97 || x > 122) {
                 throw new ScannerException();
             }
+            sb.append(x);
         }
-        return token;
+        for (TokenType tmpTokenType : keywords) {
+            if (sb.toString().matches(tmpTokenType.getRegex())) {
+                return new Token(riga, tmpTokenType, sb.toString());
+            }
+        }
+        return new Token(riga, TokenType.ID, sb.toString());
     }
 }
