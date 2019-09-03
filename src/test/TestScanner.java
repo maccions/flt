@@ -27,6 +27,8 @@ public class TestScanner {
 			scanner.nextToken();
 			assertEquals("<FNUM , r: 1 v: 0.23>", scanner.nextToken().toString());
 			scanner.nextToken();
+			assertEquals("<FNUM , r: 2 v: 0.123456>", scanner.nextToken().toString());
+			scanner.nextToken();
 			assertThrows(ScannerException.class, () -> scanner.nextToken());
 		} catch (Exception e) {
 			fail();
