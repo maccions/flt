@@ -20,8 +20,8 @@ public class TestAst {
 		Parser parser = new Parser(scanner);
 		NodeProgram tree = parser.parse();
 		assertEquals(
-				"[NodeDecl{id=NodeId{name='a', definition=null}, type=INT}]\n" +
-						"[NodeDecl{id=NodeId{name='b', definition=null}, type=FLOAT}]\n",
+				"<ID a ,INT>\n" +
+						"<ID b ,FLOAT>\n",
 				tree.toString());
 	}
 
@@ -32,9 +32,9 @@ public class TestAst {
 		Parser parser = new Parser(scanner);
 		NodeProgram tree = parser.parse();
 		assertEquals(
-				"[NodeDecl{id=NodeId{name='a', definition=null}, type=INT}]\n" +
-						"[NodeAssign{id=NodeId{name='a', definition=null}, expr=NodeCost{value='5', type=INT}}]\n" +
-						"[NodePrint{id=NodeId{name='a', definition=null}}]\n",
+				"<ID a ,INT>\n" +
+						"<ASSIGN a ,5>\n" +
+						"<PRINT a>\n",
 				tree.toString()
 		);
 	}
@@ -46,8 +46,8 @@ public class TestAst {
 		Parser parser = new Parser(scanner);
 		NodeProgram tree = parser.parse();
 		assertEquals(
-				"[NodeDecl{id=NodeId{name='a', definition=null}, type=INT}]\n" +
-						"[NodeAssign{id=NodeId{name='a', definition=null}, expr=NodeBinOp{op=PLUS, left=NodeCost{value='2', type=INT}, right=NodeCost{value='3', type=INT}}}]\n",
+				"<ID a ,INT>\n" +
+						"<ASSIGN a ,(2 PLUS 3)>\n",
 				tree.toString()
 		);
 	}
@@ -59,11 +59,11 @@ public class TestAst {
 		Parser parser = new Parser(scanner);
 		NodeProgram tree = parser.parse();
 		assertEquals(
-				"[NodeDecl{id=NodeId{name='a', definition=null}, type=INT}]\n" +
-						"[NodeAssign{id=NodeId{name='a', definition=null}, expr=NodeCost{value='5', type=INT}}]\n" +
-						"[NodeDecl{id=NodeId{name='b', definition=null}, type=FLOAT}]\n" +
-						"[NodeAssign{id=NodeId{name='b', definition=null}, expr=NodeBinOp{op=PLUS, left=NodeDeref{id=NodeId{name='a', definition=null}}, right=NodeCost{value='3.2', type=FLOAT}}}]\n" +
-						"[NodePrint{id=NodeId{name='b', definition=null}}]\n",
+				"<ID a ,INT>\n" +
+						"<ASSIGN a ,5>\n" +
+						"<ID b ,FLOAT>\n" +
+						"<ASSIGN b ,(a PLUS 3.2)>\n" +
+						"<PRINT b>\n",
 				tree.toString());
 	}
 }

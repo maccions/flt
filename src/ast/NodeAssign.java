@@ -31,10 +31,7 @@ public class NodeAssign extends NodeStm {
 
     @Override
     public String toString() {
-        return "NodeAssign{" +
-                "id=" + id +
-                ", expr=" + expr +
-                '}';
+        return "<ASSIGN "+id+" ,"+expr+">";
     }
 
     @Override

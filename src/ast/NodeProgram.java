@@ -14,12 +14,12 @@ public class NodeProgram extends NodeAST {
 
     @Override
     public String toString() {
-        StringBuilder lista = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         for (NodeDecSt x : decsts)
-            lista.append("[").append(x.toString()).append("]\n");
+            sb.append(x.toString()).append("\n");
 
-        return lista.toString();
+        return sb.toString();
     }
 
     public List<NodeDecSt> getDecsts() {

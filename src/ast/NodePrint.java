@@ -20,9 +20,7 @@ public class NodePrint extends NodeStm {
 
     @Override
     public String toString() {
-        return "NodePrint{" +
-                "id=" + id +
-                '}';
+        return "<PRINT "+id+">";
     }
 
     @Override

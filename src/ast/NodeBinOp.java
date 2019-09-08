@@ -42,11 +42,7 @@ public class NodeBinOp extends NodeExpr{
 
     @Override
     public String toString() {
-        return "NodeBinOp{" +
-                "op=" + op +
-                ", left=" + left +
-                ", right=" + right +
-                '}';
+        return "("+left+" "+op+" "+right+")";
     }
 
     @Override

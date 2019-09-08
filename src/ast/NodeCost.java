@@ -15,10 +15,7 @@ public class NodeCost extends NodeExpr {
 
     @Override
     public String toString() {
-        return "NodeCost{" +
-                "value='" + value + '\'' +
-                ", type=" + type +
-                '}';
+        return value;
     }
 
     public String getValue() {

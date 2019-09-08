@@ -30,10 +30,7 @@ public class NodeId extends NodeAST {
 
     @Override
     public String toString() {
-        return "NodeId{" +
-                "name='" + name + '\'' +
-                ", definition=" + definition +
-                '}';
+        return name;
     }
 
     @Override
