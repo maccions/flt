@@ -1,0 +1,5 @@
+int a
+a = 5
+float b
+b = 5.5 + a
+print b
