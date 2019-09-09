@@ -14,7 +14,7 @@ parser code {:
   	protected Lexer lexer;
   	protected SymbolTable symbolTable;
   	private StringBuffer log;
-  	String nomefile = "cup6.txt"    //nome file da analizzare
+  	private final String nomefile = "cup6.txt";    //nome file da analizzare
 :}
 
 /*
