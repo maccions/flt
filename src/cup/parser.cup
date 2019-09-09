@@ -1,0 +1,168 @@
+/*
+   Simple +/-/* expression language; 
+   parser evaluates constant expressions on the fly
+*/
+
+package cup.example;
+
+import java_cup.runtime.*;
+import cup.example.Lexer;
+import cup.example.utilities.*;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+
+parser code {:
+  	protected Lexer lexer;
+  	protected SymbolTable symbolTable;
+  	private StringBuffer log;
+  	private final static String SEP = System.lineSeparator();
+:}
+
+/* define how to connect to the scanner! */
+init with {:
+  	ComplexSymbolFactory f = new ComplexSymbolFactory();
+  	FileInputStream fis = null;
+
+	//File file = new File("assign.txt");
+	//File file = new File("decl.txt");
+  	//File file = new File("deref.txt");
+	File file = new File("input.txt");
+	//File file = new File("print.txt");
+
+  	try {
+    	fis = new FileInputStream(file);
+  	} catch (IOException e) {
+    	e.printStackTrace();
+  	}
+ 
+  	symbolFactory = f;
+  	lexer = new Lexer(f, fis);
+  	symbolTable = new SymbolTable();
+  	log = new StringBuffer();
+:};
+
+scan with {: return lexer.next_token(); :};
+
+action code {:
+	private TypeDescriptor typeCheck(TypeDescriptor t1, TypeDescriptor t2) {
+		if (t1 == TypeDescriptor.ERROR || t2 == TypeDescriptor.ERROR) {
+			return TypeDescriptor.ERROR;
+		} else if (t1 == TypeDescriptor.FLOAT || t2 == TypeDescriptor.FLOAT) {
+			return TypeDescriptor.FLOAT;
+		} else {
+			return TypeDescriptor.INT;
+		}
+	}
+
+	private TypeDescriptor declarationCheck(TypeDescriptor type, String id) {
+		if (symbolTable.lookup(id) != null) {
+	    	log.append("[Dcl -> ").append(type.toString()).append(" ID] ID \"").append(id).append("\" was already declared").append(SEP);
+			return TypeDescriptor.ERROR;
+	    } else {
+			symbolTable.enter(id, new Attributes(type));
+			return type;
+		}
+	}
+
+	private TypeDescriptor dereferenceCheck(String production, String id) {
+		Attributes attr = symbolTable.lookup(id);
+
+		if (attr == null) {
+			log.append(production).append(" missing declaration for ID \"").append(id).append("\"").append(SEP);
+			return TypeDescriptor.ERROR;
+		} else {
+			return attr.getTD();
+		}
+	}
+
+	private boolean areCompatible(TypeDescriptor t1, TypeDescriptor t2) {
+        if (t1 != TypeDescriptor.ERROR && t2 != TypeDescriptor.ERROR) {
+            return t1 == t2 || t1 == TypeDescriptor.FLOAT && t2 == TypeDescriptor.INT;
+        }
+
+        return false;
+    }
+:};
+
+/* Terminals (tokens returned by the scanner). */
+terminal            PLUS, MINUS, TIMES, DIVIDE, ASSIGN, INT, FLOAT, PRINT;
+terminal String		INUM, FNUM, ID;
+
+/* Non terminals */
+non terminal TypeDescriptor 	Prog, DSs, Dcl, Stm, Expr, Op, Val;
+
+/* Precedences */
+precedence left PLUS, MINUS;
+// TIMES e DIVIDE dichiarati dopo hanno precedenza maggiore di PLUS e MINUS dichiarati prima
+precedence left TIMES, DIVIDE;
+
+/* The grammar rules */
+Prog ::= DSs:d                      {: if (d == TypeDescriptor.ERROR) {
+									       System.out.println("The program contains type errors:" + SEP
+										       + log.toString().split(SEP)[0] + SEP // stampa solo il primo errore
+										   );
+									   } else {
+									       System.out.println("The program is well typed!");
+									   }
+
+									   RESULT = d;
+									:}
+      ;
+
+DSs ::= Dcl:dc DSs:ds				{: RESULT = typeCheck(dc, ds); :}
+      | Stm:s DSs:ds  				{: RESULT = typeCheck(s, ds); :}
+      | // epsilon	
+      ;
+
+Dcl ::= FLOAT ID:i 					{: RESULT = declarationCheck(TypeDescriptor.FLOAT, i); :}
+      | INT ID:i   					{: RESULT = declarationCheck(TypeDescriptor.INT, i); :}
+      ;
+
+Stm ::= ID:i ASSIGN Expr:e 			{: Attributes attr = symbolTable.lookup(i);
+									   String production = "[Stm -> ID ASSIGN Expr]";
+
+									   if (attr == null) {
+									       log.append(production).append(" missing declaration for ID \"").append(i).append("\"").append(SEP);
+									       RESULT = TypeDescriptor.ERROR;
+									   } else {
+										   TypeDescriptor td = attr.getTD();
+
+										   if (!areCompatible(td, e)) {
+			                                   log.append(production).append(" Expr of type ").append(e)
+										           .append(" cannot be assigned to ID \"").append(i).append("\"")
+											       .append(" of type ").append(td).append(SEP);
+									           RESULT = TypeDescriptor.ERROR;
+									   	   } else {
+									           RESULT = td;
+									       }
+									   }
+									:} 
+      | PRINT ID:i 					{: RESULT = dereferenceCheck("[Stm -> PRINT ID]", i); :}
+      ;
+      
+Expr ::= Expr:e1 Op Expr:e2			{: TypeDescriptor td = typeCheck(e1, e2);
+									   
+									   if (td == TypeDescriptor.ERROR) {
+									       if (e1 == TypeDescriptor.ERROR) {
+									           log.append("[Expr -> Expr Op Expr] the type of left Expr is invalid").append(SEP);
+									       } else if (e2 == TypeDescriptor.ERROR) {
+									           log.append("[Expr -> Expr Op Expr] the type of right Expr is invalid").append(SEP);
+									       }
+									   }
+
+									   RESULT = td;
+									:}
+	  | Val:v						{: RESULT = v; :}
+	  ;
+	  
+Op ::= PLUS							
+	  | MINUS
+	  | TIMES
+	  | DIVIDE
+	  ;
+	  
+Val ::= INUM  						{: RESULT = TypeDescriptor.INT; :}
+      | FNUM  						{: RESULT = TypeDescriptor.FLOAT; :}
+      | ID:i						{: RESULT = dereferenceCheck("[Val -> ID]", i); :}
+      ;
